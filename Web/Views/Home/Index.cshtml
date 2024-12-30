@@ -1,0 +1,134 @@
+﻿@model HomeVM
+@using System.Security.Claims
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var httpContext = HttpContextAccessor.HttpContext;
+    string role = httpContext.User.Claims.First(x => x.Type == ClaimTypes.Role).Value;
+    string unvan = httpContext.User.Claims.First(x => x.Type == "Unvan").Value;
+    string birim = httpContext.User.Claims.First(x => x.Type == "Birim").Value;
+    string ad = httpContext.User.Claims.First(x => x.Type == "Ad").Value;
+    string soyad = httpContext.User.Claims.First(x => x.Type == "Soyad").Value;
+    string image = "data:image/jpeg;base64," + httpContext.Session.GetString("user_image");
+    string sicilNo = httpContext.User.Claims.First(x => x.Type == "SicilNo").Value;
+
+    ViewData["Title"] = "Ana Sayfa";
+    ViewData["Root"] = "Sayfalar";
+}
+
+@if (Model.GunSayisi != 0)
+{
+    <!--begin::Alert-->
+    <div class="alert alert-dismissible bg-light-success d-flex flex-column flex-sm-row p-5 shadow-sm">
+        <!--begin::Icon-->
+        <i class="ki-duotone ki-calendar-tick fs-5x text-success me-6 mb-5 mb-sm-0">
+            <span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span><span class="path6"></span>
+        </i>
+        <!--end::Icon-->
+        <!--begin::Wrapper-->
+        <div class="d-flex flex-column pe-0 pe-sm-10">
+            <!--begin::Title-->
+            <h4 class="fw-bolder text-success fs-2">Şu anda izinlisiniz</h4>
+            <!--end::Title-->
+            <!--begin::Content-->
+            <div class="text-success fs-4">
+                <span class="fw-bolder">"@Model.BaslangicTarihi"</span> tarihinde başlayan <span class="fw-bolder">"@Model.GunSayisi"</span> günlük izniniz <span class="fw-bolder">"@Model.BitisTarihi"</span> tarihinde sona erecektir. İşe dönüş tarihiniz <span class="fw-bolder">"@Model.IseBaslamaTarihi"</span> tarihidir.
+            </div>
+            <!--end::Content-->
+        </div>
+        <!--end::Wrapper-->
+        <!--begin::Close-->
+        <button type="button" class="position-absolute position-sm-relative m-2 m-sm-0 top-0 end-0 btn btn-icon ms-sm-auto" data-bs-dismiss="alert">
+            <i class="ki-duotone ki-cross fs-1 text-success"><span class="path1"></span><span class="path2"></span></i>
+        </button>
+        <!--end::Close-->
+    </div>
+    <!--end::Alert-->
+}
+
+<div class="card shadow-sm p-5">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-start">
+            <div class="symbol symbol-90px symbol-md-100px symbol-circle">
+                <img src="@image" alt="user" />
+            </div>
+            <div class="mx-10">
+                <h4>Kişisel Bilgiler</h4>
+                <div>
+                    <span class="fw-bolder">Unvan : </span>
+                    <div class="badge badge-light-success fw-bolder">
+                        <span>@unvan</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="fw-bolder">Ad Soyad : </span>
+                    <span>@ad @soyad</span>
+                </div>
+                <div>
+                    <span class="fw-bolder">Sicil No : </span>
+                    <span>@sicilNo</span>
+                </div>
+            </div>
+            <div>
+                <h4>Birim Bilgileri</h4>
+                <div>
+                    <span class="fw-bolder">Birim : </span>
+                    <span>@birim</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap">
+            <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                <div class="fs-5x fw-bolder text-center" data-kt-countup="true" data-kt-countup-value="@Model.KalanSenelikIzinGunSayisi">0</div>
+                <div class="fw-bolder fs-3 text-gray-400 text-center">Kalan Senelik İzin Gün Sayısı</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (role == "Onay_Yetkilisi" || role == "Yetkili")
+{
+    <div class="row py-5">
+        <div class="col-md-6">
+            <a asp-controller="OnayYetkilisi" asp-action="Izin" class="card hover-elevate-up parent-hover shadow-sm" title="Detay için tıklayınız...">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="ki-duotone ki-notification-on fs-5x text-warning">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                            <span class="path4"></span>
+                            <span class="path5"></span>
+                        </i>
+                        <span class="ms-3 text-gray-700 parent-hover-primary fs-4 fw-bold">
+                            Gelen İzin Talepleri
+                        </span>
+                    </div>
+                    <div class="fs-2hx fw-bold" data-kt-countup="true" data-kt-countup-value="@Model.GelenIzinTalepSayisi">0</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a asp-controller="OnayYetkilisi" asp-action="IslemYapilanIzinler" class="card hover-elevate-up parent-hover shadow-sm" title="Detay için tıklayınız...">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="ki-duotone ki-eye fs-5x text-primary">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                        <span class="ms-3 text-gray-700 parent-hover-primary fs-4 fw-bold">
+                            İşlem Yapılan İzinler
+                        </span>
+                    </div>
+                    <div class="fs-2hx fw-bold" data-kt-countup="true" data-kt-countup-value="@Model.IslemYapilanIzinSayisi">0</div>
+                </div>
+            </a>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/home.js" asp-append-version="true"></script>
+}

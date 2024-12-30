@@ -1,0 +1,206 @@
+﻿@{
+    ViewData["Title"] = "İşlem Yapılan İzinler";
+    ViewData["Root"] = "İzin Onay İşlemleri";
+}
+
+<div class="card">
+    <div class="card-header align-items-center py-5 gap-2 gap-md-5">
+        <div class="card-title">
+            <!--begin::Search-->
+            <div class="d-flex align-items-center position-relative my-1">
+                <span class="svg-icon svg-icon-1 position-absolute ms-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                        <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
+                    </svg>
+                </span>
+                <input type="text" data-kt-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Ara" />
+            </div>
+            <!--end::Search-->
+        </div>
+        <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
+            <!--begin::Export dropdown-->
+            <button type="button" class="btn btn-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                <i class="ki-duotone ki-exit-down fs-2"><span class="path1"></span><span class="path2"></span></i>
+                Rapor Al
+            </button>
+            <!--begin::Menu-->
+            <div id="islem_yapilan_izinler_table_export_menu" class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="copy">
+                        Kopyala
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="excel">
+                        Excel Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="csv">
+                        CSV Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="pdf">
+                        PDF Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+            </div>
+            <!--end::Menu-->
+            <!--end::Export dropdown-->
+            <!--begin::Hide default export buttons-->
+            <div id="islem_yapilan_izinler_table_buttons" class="d-none"></div>
+            <!--end::Hide default export buttons->
+                            </div>
+                        </div>
+            <!--end::Export buttons-->
+        </div>
+    </div>
+
+    <div class="table-responsive  p-10">
+        <table class="table table-row-bordered table-row-dashed" id="islem_yapilan_izinler_table">
+            <thead>
+                <!--begin::Table row-->
+                <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                    <th>Id</th>
+                    <th>İstek Tarihi</th>
+                    <th>Ad Soyad</th>
+                    <th>Unvan</th>
+                    <th>Birim</th>
+                    <th>Doğrulama Yöntemi</th>
+                    <th>Genel İzin Durumu</th>
+                    <th></th>
+                </tr>
+                <!--end::Table row-->
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section modals {
+    <!--begin::İzin Detay Modal-->
+    <div class="modal fade modal-xl" tabindex="-1" id="izin-detay">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">İzin Detayı</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x mb-5 fs-6">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#izin-formu">İzin Bilgileri</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#izin-hareketleri">İzin Hareketleri</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="izin-formu" role="tabpanel">
+                            <div class="card shadow-sm">
+                                <div class="table-responsive fs-6 px-6 py-3">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td class="fw-bolder">İstek Tarihi</td>
+                                                <td id="istekTarihiVal"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bolder">İzin Türü</td>
+                                                <td id="izinTurVal"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bolder">Gün Sayısı</td>
+                                                <td id="gunSayisiVal"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bolder">Başlangıç - Bitiş Tarihi</td>
+                                                <td>
+                                                    <span id="baslangicTarihiVal"></span> - <span id="bitisTarihiVal"></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bolder">Mahsuben Gün Sayısı</td>
+                                                <td id="mahsubenGunSayisiVal"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bolder">Mahsuben Başlangıç - Bitiş Tarihi</td>
+                                                <td>
+                                                    <span id="mahsubenBaslangicTarihiVal"></span> - <span id="mahsubenBitisTarihiVal"></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bolder">İşe Başlama Tarihi</td>
+                                                <td id="iseBaslamaTarihiVal"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bolder">Telefon</td>
+                                                <td id="telefonVal"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bolder">Görevini Yapacak Kişi</td>
+                                                <td id="goreviniYapacakKisiVal"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bolder">Yıllık İzin Ücret İsteği	</td>
+                                                <td id="yillikIzinUcretiIstegiVal"></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="fw-bolder">Açıklama</td>
+                                                <td id="aciklamaVal"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="izin-hareketleri" role="tabpanel">
+                            <div id="izin-hareketleri-not-found" class="alert alert-success d-flex align-items-center p-5">
+                                <!--begin::Icon-->
+                                <i class="fa-solid fa-circle-info fs-2hx text-success me-4"><span class="path1"></span><span class="path2"></span></i>
+                                <!--end::Icon-->
+                                <!--begin::Wrapper-->
+                                <div class="d-flex flex-column">
+                                    <!--begin::Title-->
+                                    <h4 class="mb-1 text-success">Bilgilendirme</h4>
+                                    <!--end::Title-->
+                                    <!--begin::Content-->
+                                    <span>Herhangi bir izin hareketi verisi bulunamadı!</span>
+                                    <!--end::Content-->
+                                </div>
+                                <!--end::Wrapper-->
+                            </div>
+                            <div id="izin-hareketleri-table-wrapper" class="table-responsive"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::İzin Detay Modal-->
+}
+
+@section CSS {
+    <link href="~/assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+}
+
+@section Scripts {
+    <script src="~/assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="~/js/islem-yapilan-izinler.js" asp-append-version="true"></script>
+}

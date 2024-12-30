@@ -1,0 +1,253 @@
+﻿@model UpdateRetSebepVM
+
+@{
+    ViewData["Title"] = "Ret Sebepleri";
+    ViewData["Root"] = "Temel İşlemler";
+    List<string> eklenemeyenRetSebepAciklamalari = ViewBag.AlertDanger;
+    List<CreateRetSebepVM> eklenenRetSebepleri = ViewBag.AlertSuccess;
+}
+<div class="card mb-10">
+    <div class="card-flush p-8">
+        @if (eklenenRetSebepleri?.Count > 0)
+        {
+            <!--begin::Alert-->
+            <div class="alert alert-dismissible bg-light-success d-flex flex-column flex-sm-row p-5 mb-10">
+                <!--begin::Icon-->
+                <i class="ki-duotone ki-shield-tick fs-2hx text-success me-4 mb-5 mb-sm-0"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+                <!--end::Icon-->
+                <!--begin::Wrapper-->
+                <div class="d-flex flex-column pe-0 pe-sm-10">
+                    <!--begin::Title-->
+                    <h4 class="fw-semibold">Aşağıdaki veriler başarıyla eklendi!</h4>
+                    <!--end::Title-->
+                    <!--begin::Content-->
+                    <ul>
+                        @foreach (var eklenenRetSebebi in eklenenRetSebepleri)
+                        {
+                            <!--begin::Content-->
+                            <li>
+                                <span>"@eklenenRetSebebi.Aciklama" açıklamalı ret sebebi @(eklenenRetSebebi.Duzenlenebilir ? "düzenlenebilir" : "düzenlenemez") ve @(eklenenRetSebebi.Aktif ? "aktif" : "pasif") olarak başarıyla ekledi.</span>
+                            </li>
+                            <!--end::Content-->
+                        }
+                    </ul>
+                    <!--end::Content-->
+                </div>
+                <!--end::Wrapper-->
+                <!--begin::Close-->
+                <button type="button" class="position-absolute position-sm-relative m-2 m-sm-0 top-0 end-0 btn btn-icon ms-sm-auto" data-bs-dismiss="alert">
+                    <i class="ki-duotone ki-cross fs-1 text-success"><span class="path1"></span><span class="path2"></span></i>
+                </button>
+                <!--end::Close-->
+            </div>
+            <!--end::Alert-->
+        }
+
+        @if (eklenemeyenRetSebepAciklamalari?.Count > 0)
+        {
+            <!--begin::Alert-->
+            <div class="alert alert-dismissible bg-light-danger d-flex flex-column flex-sm-row p-5 mb-10">
+                <!--begin::Icon-->
+                <i class="ki-duotone ki-information-5 fs-2hx text-danger me-4 mb-5 mb-sm-0"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+                <!--end::Icon-->
+                <!--begin::Wrapper-->
+                <div class="d-flex flex-column pe-0 pe-sm-10">
+                    <!--begin::Title-->
+                    <h4 class="fw-semibold">Aynı açıklamaya sahip veriler tekrar eklenemez!</h4>
+                    <!--end::Title-->
+                    <!--begin::Content-->
+                    <ul>
+                        @foreach (var eklenemeyenRetSebepAciklamasi in eklenemeyenRetSebepAciklamalari)
+                        {
+                            <!--begin::Content-->
+                            <li>
+                                <span>"@eklenemeyenRetSebepAciklamasi" açıklamasıyla eklenmiş mevcut bir veri var.</span>
+                            </li>
+                            <!--end::Content-->
+                        }
+                    </ul>
+                    <!--end::Content-->
+                </div>
+                <!--end::Wrapper-->
+                <!--begin::Close-->
+                <button type="button" class="position-absolute position-sm-relative m-2 m-sm-0 top-0 end-0 btn btn-icon ms-sm-auto" data-bs-dismiss="alert">
+                    <i class="ki-duotone ki-cross fs-1 text-danger"><span class="path1"></span><span class="path2"></span></i>
+                </button>
+                <!--end::Close-->
+            </div>
+            <!--end::Alert-->
+        }
+
+        <form id="retSebepleriForm" asp-controller="Admin" asp-action="RetSebepleri">
+            <!--begin::Repeater-->
+            <div id="repeater">
+                <!--begin::Form group-->
+                <div class="form-group mb-6">
+                    <a href="javascript:;" data-repeater-create class="btn btn-light-primary">
+                        <i class="ki-duotone ki-plus fs-3"></i>
+                        Yeni Form Alanı Ekle
+                    </a>
+                </div>
+                <!--end::Form group-->
+                <!--begin::Form group-->
+                <div class="form-group mb-6">
+                    <div data-repeater-list="repeater">
+                        <div data-repeater-item class="mb-3">
+                            <div class="form-group row">
+                                <div class="col-md-6 fv-row">
+                                    <label for="Aciklama" class="form-label">Açıklama</label>
+                                    <input class="form-control mb-2 mb-md-0" id="Aciklama" name="Aciklama" />
+                                </div>
+                                <div class="col-md-2 fv-row form-check form-switch form-check-custom form-check-solid mt-8">
+                                    <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" value="" checked="checked" id="Duzenlenebilir" name="Duzenlenebilir" />
+                                    <label class="form-check-label" for="Duzenlenebilir">Düzenlenebilir</label>
+                                </div>
+                                <div class="col-md-2 fv-row form-check form-switch form-check-custom form-check-solid mt-8">
+                                    <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" value="" checked="checked" id="Aktif" name="Aktif" />
+                                    <label class="form-check-label" for="Aktif">Aktif</label>
+                                </div>
+                                <div class="col-md-2 mt-10">
+                                    <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger md-8">
+                                        <i class="ki-duotone ki-trash fs-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
+                                        Sil
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Form group-->
+            </div>
+            <!--end::Repeater-->
+            <div class="mt-3">
+                <input class="btn btn-primary" type="submit" value="Ret Sebepleri Ekle" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header align-items-center py-5 gap-2 gap-md-5">
+        <div class="card-title">
+            <!--begin::Search-->
+            <div class="d-flex align-items-center position-relative my-1">
+                <span class="svg-icon svg-icon-1 position-absolute ms-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                        <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
+                    </svg>
+                </span>
+                <input type="text" data-kt-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Ara" />
+            </div>
+            <!--end::Search-->
+        </div>
+        <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
+            <!--begin::Export dropdown-->
+            <button type="button" class="btn btn-light-primary fw-bold" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                <i class="ki-duotone ki-exit-down fs-2"><span class="path1"></span><span class="path2"></span></i>
+                Rapor Al
+            </button>
+            <!--begin::Menu-->
+            <div id="ret_sebepleri_table_export_menu" class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="copy">
+                        Kopyala
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="excel">
+                        Excel Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="csv">
+                        CSV Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="pdf">
+                        PDF Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+            </div>
+            <!--end::Menu-->
+            <!--end::Export dropdown-->
+            <!--begin::Hide default export buttons-->
+            <div id="ret_sebepleri_table_buttons" class="d-none"></div>
+            <!--end::Hide default export buttons->
+                            </div>
+                        </div>
+            <!--end::Export buttons-->
+        </div>
+    </div>
+
+    <div class="table-responsive p-10">
+        <table class="table table-row-bordered table-row-dashed" id="ret_sebepleri_table">
+            <thead>
+                <!--begin::Table row-->
+                <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                    <th>Id</th>
+                    <th>Açıklama</th>
+                    <th>Düzenlenebilir</th>
+                    <th>Aktif</th>
+                    <th>İşlemler</th>
+                </tr>
+                <!--end::Table row-->
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section modals {
+    <!--begin::Update Ret Sebep Modal-->
+    <div class="modal fade modal-lg" tabindex="-1" id="updateRetSebepModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Ret Sebebini Güncelle</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <form id="updateRetSebepForm" method="post" asp-controller="Admin" asp-action="UpdateRetSebep">
+                        <input type="hidden" asp-for="UpdateId" />
+                        <div class="mb-3 fv-row">
+                            <label asp-for="UpdateAciklama">Açıklama</label>
+                            <input asp-for="UpdateAciklama" class="form-control" />
+                        </div>
+                        <div class="d-flex my-8">
+                            <div class="form-check form-switch form-check-custom form-check-solid me-3">
+                                <input asp-for="UpdateDuzenlenebilir" class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" />
+                                <label asp-for="UpdateDuzenlenebilir" class="form-check-label">Düzenlenebilir</label>
+                            </div>
+                            <div class="form-check form-switch form-check-custom form-check-solid">
+                                <input asp-for="UpdateAktif" class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" />
+                                <label asp-for="UpdateAktif" class="form-check-label">Aktif</label>
+                            </div>
+                        </div>
+                        <input id="btnGuncelle" type="submit" value="Güncelle" class="btn btn-primary" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Update Ret Sebep Modal-->
+}
+
+@section Scripts {
+    <script src="~/assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
+    <script src="~/js/ret-sebepleri.js" asp-append-version="true"></script>
+}

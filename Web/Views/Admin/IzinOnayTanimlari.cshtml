@@ -1,0 +1,198 @@
+﻿@model IzinOnayTanimlariVM
+@{
+    ViewData["Root"] = "Temel İşlemler";
+    ViewData["Title"] = "Onay Tanımlamaları";
+}
+
+<div class="card">
+    <div class="card-header align-items-center py-5 gap-2 gap-md-5">
+        <div class="card-title">
+            <!--begin::Search-->
+            <div class="d-flex align-items-center position-relative my-1">
+                <span class="svg-icon svg-icon-1 position-absolute ms-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                        <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
+                    </svg>
+                </span>
+                <input type="text" data-kt-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Ara" />
+            </div>
+            <!--end::Search-->
+        </div>
+        <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
+            <button type="button" class="btn btn-light-primary fw-bold" data-bs-toggle="modal" data-bs-target="#createOnayTanimModal">
+                <i class="ki-duotone ki-plus fs-2"><span class="path1"></span><span class="path2"></span></i>
+                İzin Onay Tanımı Oluştur
+            </button>
+            <!--begin::Export dropdown-->
+            <button type="button" class="btn btn-light-primary fw-bold" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                <i class="ki-duotone ki-exit-down fs-2"><span class="path1"></span><span class="path2"></span></i>
+                Rapor Al
+            </button>
+            <!--begin::Menu-->
+            <div id="izin_onay_tanimlari_table_export_menu" class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="copy">
+                        Kopyala
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="excel">
+                        Excel Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="csv">
+                        CSV Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="pdf">
+                        PDF Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+            </div>
+            <!--end::Menu-->
+            <!--end::Export dropdown-->
+            <!--begin::Hide default export buttons-->
+            <div id="izin_onay_tanimlari_table_buttons" class="d-none"></div>
+            <!--end::Hide default export buttons->
+                            </div>
+                        </div>
+            <!--end::Export buttons-->
+        </div>
+    </div>
+    <div class="table-responsive p-10">
+        <table class="table table-row-bordered table-row-dashed" id="izin_onay_tanimlari_table">
+            <thead>
+                <!--begin::Table row-->
+                <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                    <th>Id</th>
+                    <th>Açıklama</th>
+                    <th>Merkez Müdürü Yetkisi</th>
+                    <th>Personel Şube Yetkisi</th>
+                    <th>Aktif</th>
+                    <th>İşlemler</th>
+                </tr>
+                <!--end::Table row-->
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section modals {
+    <!--begin::Create İzin Onay Tanım Modal-->
+    <div class="modal fade modal-lg" tabindex="-1" id="createOnayTanimModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">İzin Onay Tanımı Oluştur</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <form id="createIzinOnayTanimForm" asp-controller="Admin" asp-action="IzinOnayTanimlari">
+                        <div class="fv-row mb-3">
+                            <label asp-for="CreateIzinOnayTanimVM.Aciklama" class="form-label">Açıklama</label>
+                            <input class="form-control" asp-for="CreateIzinOnayTanimVM.Aciklama" />
+                        </div>
+
+                        <div class="fv-row mb-3">
+                            <label asp-for="CreateIzinOnayTanimVM.CalisanIdleri" class="form-label">Onay Verecek Yetkili(ler)</label>
+                            <select asp-for="CreateIzinOnayTanimVM.CalisanIdleri" class="form-select" data-control="select2" data-close-on-select="false" data-placeholder="Ad Soyad" data-allow-clear="true" multiple="multiple"></select>
+                        </div>
+
+                        <div class="fv-row form-check form-switch form-check-custom form-check-solid my-6">
+                            <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" asp-for="CreateIzinOnayTanimVM.MerkezMuduruYetkisi" value="false" />
+                            <label class="form-check-label" asp-for="CreateIzinOnayTanimVM.MerkezMuduruYetkisi">Merkez Müdürü Yetkisi Var</label>
+                        </div>
+
+                        <div class="fv-row form-check form-switch form-check-custom form-check-solid my-6">
+                            <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" asp-for="CreateIzinOnayTanimVM.PersonelSubeYetkisi" value="false" />
+                            <label class="form-check-label" asp-for="CreateIzinOnayTanimVM.PersonelSubeYetkisi">Personel Şube Yetkisi Var</label>
+                        </div>
+
+                        <div class="fv-row form-check form-switch form-check-custom form-check-solid my-6">
+                            <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" asp-for="CreateIzinOnayTanimVM.Aktif" checked="checked" />
+                            <label class="form-check-label" asp-for="CreateIzinOnayTanimVM.Aktif">Aktif</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <input class="btn btn-primary fw-bold" type="submit" value="Oluştur" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Create İzin Onay Tanım Modal-->
+    <!--begin::Update İzinOnayTanim Modal-->
+    <div class="modal fade modal-lg" tabindex="-1" id="updateİzinOnayTanimModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">İzin Onay Tanımını Güncelle</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <form id="updateİzinOnayTanimForm" method="post" asp-controller="Admin" asp-action="UpdateIzinOnayTanim">
+                        <input type="hidden" asp-for="UpdateIzinOnayTanimVM.Id" />
+
+                        <div class="fv-row mb-3">
+                            <label asp-for="UpdateIzinOnayTanimVM.Aciklama" class="form-label">Açıklama</label>
+                            <input class="form-control" asp-for="UpdateIzinOnayTanimVM.Aciklama" />
+                        </div>
+
+
+                        <div class="fv-row mb-3">
+                            <label asp-for="UpdateIzinOnayTanimVM.CalisanIdleri" class="form-label">Onay Verecek Yetkili(ler)</label>
+                            <select asp-for="UpdateIzinOnayTanimVM.CalisanIdleri" class="form-select" data-control="select2" data-close-on-select="false" data-placeholder="Ad Soyad" data-allow-clear="true" multiple="multiple"></select>
+                        </div>
+
+                        <div class="fv-row form-check form-switch form-check-custom form-check-solid my-6">
+                            <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" asp-for="UpdateIzinOnayTanimVM.MerkezMuduruYetkisi" value="false" />
+                            <label class="form-check-label" asp-for="UpdateIzinOnayTanimVM.MerkezMuduruYetkisi">Merkez Müdürü Yetkisi Var</label>
+                        </div>
+
+                        <div class="fv-row form-check form-switch form-check-custom form-check-solid my-6">
+                            <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" asp-for="UpdateIzinOnayTanimVM.PersonelSubeYetkisi" />
+                            <label class="form-check-label" asp-for="UpdateIzinOnayTanimVM.PersonelSubeYetkisi">Personel Şube Yetkisi Var</label>
+                        </div>
+
+                        <div class="fv-row form-check form-switch form-check-custom form-check-solid my-6">
+                            <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" asp-for="UpdateIzinOnayTanimVM.Aktif" checked="checked" />
+                            <label class="form-check-label" asp-for="UpdateIzinOnayTanimVM.Aktif">Aktif</label>
+                        </div>
+
+                        <input id="btnGuncelle" type="submit" value="Güncelle" class="btn btn-primary" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Update İzinOnayTanim Modal-->
+}
+
+@section Scripts {
+    <script src="~/js/izin-onay-tanimlari.js" asp-append-version="true"></script>
+}
+

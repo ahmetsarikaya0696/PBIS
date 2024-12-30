@@ -1,0 +1,323 @@
+﻿@using Application.Features.IzinGruplari.Commands.Create
+@model IzinGruplariVM
+@{
+    ViewData["Root"] = "Temel İşlemler";
+    ViewData["Title"] = "İzin Grupları";
+
+    List<SelectListItem> izinOnayTanimlari = ViewBag.IzinOnayTanimlari;
+    int maxSira = izinOnayTanimlari.Count - 1;
+}
+
+<div class="card">
+    <div class="card-header align-items-center py-5 gap-2 gap-md-5">
+        <div class="card-title">
+            <!--begin::Search-->
+            <div class="d-flex align-items-center position-relative my-1">
+                <span class="svg-icon svg-icon-1 position-absolute ms-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                        <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
+                    </svg>
+                </span>
+                <input type="text" data-kt-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Ara" />
+            </div>
+            <!--end::Search-->
+        </div>
+        <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
+            <button type="button" class="btn btn-light-primary fw-bold" data-bs-toggle="modal" data-bs-target="#createIzinGrupModal">
+                <i class="ki-duotone ki-plus fs-2"><span class="path1"></span><span class="path2"></span></i>
+                İzin Grubu Oluştur
+            </button>
+            <!--begin::Export dropdown-->
+            <button type="button" class="btn btn-light-primary fw-bold" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                <i class="ki-duotone ki-exit-down fs-2"><span class="path1"></span><span class="path2"></span></i>
+                Rapor Al
+            </button>
+            <!--begin::Menu-->
+            <div id="izin_gruplari_table_export_menu" class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="copy">
+                        Kopyala
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="excel">
+                        Excel Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="csv">
+                        CSV Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="pdf">
+                        PDF Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+            </div>
+            <!--end::Menu-->
+            <!--end::Export dropdown-->
+            <!--begin::Hide default export buttons-->
+            <div id="izin_gruplari_table_buttons" class="d-none"></div>
+            <!--end::Hide default export buttons->
+                            </div>
+                        </div>
+            <!--end::Export buttons-->
+        </div>
+    </div>
+
+    <div class="table-responsive p-10">
+        <table class="table table-row-bordered table-row-dashed" id="izin_gruplari_table">
+            <thead>
+                <!--begin::Table row-->
+                <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                    <th>Id</th>
+                    <th>Açıklama</th>
+                    <th>Çalışan</th>
+                    <th>Unvan</th>
+                    <th>Birim</th>
+                    <th>İşyeri</th>
+                    <th>Başlangıç Tarihi</th>
+                    <th>Bitiş Tarihi</th>
+                    <th>İşlemler</th>
+                </tr>
+                <!--end::Table row-->
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section modals {
+    <!--begin::Create İzin Grup Modal-->
+    <div class="modal fade modal-xl" tabindex="-1" id="createIzinGrupModal" data-bs-focus="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">İzin Grubu Oluştur</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+
+                    <!--begin::Alert-->
+                    <div id="alert-danger" class="alert alert-dismissible bg-light-danger d-flex flex-column flex-sm-row p-5 mb-10 d-none">
+                        <!--begin::Icon-->
+                        <i class="ki-duotone ki-shield-tick fs-2hx text-danger me-4 mb-5 mb-sm-0"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+                        <!--end::Icon-->
+                        <!--begin::Wrapper-->
+                        <div class="d-flex flex-column pe-0 pe-sm-10">
+                            <!--begin::Title-->
+                            <h4 class="fw-semibold">Bir hata oluştu!</h4>
+                            <!--end::Title-->
+                            <!--begin::Content-->
+                            <span id="errorMessage"></span>
+                            <!--end::Content-->
+                        </div>
+                        <!--end::Wrapper-->
+                        <!--begin::Close-->
+                        <button type="button" class="position-absolute position-sm-relative m-2 m-sm-0 top-0 end-0 btn btn-icon ms-sm-auto" data-bs-dismiss="alert">
+                            <i class="ki-duotone ki-cross fs-1 text-success"><span class="path1"></span><span class="path2"></span></i>
+                        </button>
+                        <!--end::Close-->
+                    </div>
+                    <!--end::Alert-->
+
+                    <form id="izinGrupForm" asp-controller="Admin" asp-action="IzinGruplari">
+                        <div class="form-group mb-6 row">
+                            <div class="col">
+                                <div class="fv-row mb-3">
+                                    <label asp-for="CreateIzinGrupVM.Aciklama" class="form-label">Açıklama</label>
+                                    <input type="text" class="form-control mb-2 mb-md-0" asp-for="CreateIzinGrupVM.Aciklama" />
+                                </div>
+
+                                <div class="fv-row mb-3">
+                                    <label asp-for="CreateIzinGrupVM.CalisanId" class="form-label">Çalışan</label>
+                                    <select asp-for="CreateIzinGrupVM.CalisanId" class="form-select" data-control="select2" data-placeholder="Ad Soyad" data-dropdown-parent="#createIzinGrupModal" data-allow-clear="true">
+                                    </select>
+                                </div>
+
+                                <div class="fv-row mb-3">
+                                    <label asp-for="CreateIzinGrupVM.UnvanId" class="form-label">Unvan</label>
+                                    <select asp-for="CreateIzinGrupVM.UnvanId" class="form-select" data-control="select2" data-placeholder="Unvan Açıklaması" data-dropdown-parent="#createIzinGrupModal" data-allow-clear="true"></select>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="fv-row mb-3">
+                                    <label asp-for="CreateIzinGrupVM.IsyeriId" class="form-label">İşyeri</label>
+                                    <select asp-for="CreateIzinGrupVM.IsyeriId" class="form-select" data-control="select2" data-placeholder="İşyeri Adı" data-dropdown-parent="#createIzinGrupModal" data-allow-clear="true"></select>
+                                </div>
+
+                                <div class="fv-row mb-3">
+                                    <label asp-for="CreateIzinGrupVM.BirimId" class="form-label">Birim</label>
+                                    <select asp-for="CreateIzinGrupVM.BirimId" class="form-select" data-control="select2" data-placeholder="Birim Adı" data-dropdown-parent="#createIzinGrupModal" data-allow-clear="true"></select>
+                                </div>
+
+                                <div class="d-flex">
+                                    <div class="fv-row w-100 mb-3 me-3">
+                                        <label asp-for="CreateIzinGrupVM.BaslangicTarihi" class="form-label">Başlangıç Tarihi</label>
+                                        <input type="date" class="form-control mb-2 mb-md-0" asp-for="CreateIzinGrupVM.BaslangicTarihi" placeholder="Tarih seçiniz" />
+                                    </div>
+
+                                    <div class="fv-row w-100">
+                                        <label asp-for="CreateIzinGrupVM.BitisTarihi" class="form-label">Bitiş Tarihi</label>
+                                        <input type="date" class="form-control mb-2 mb-md-0" asp-for="CreateIzinGrupVM.BitisTarihi" placeholder="Tarih seçiniz" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!--begin::Repeater-->
+                        <div id="repeater">
+                            <!--begin::Form group-->
+                            <div class="form-group mb-6">
+                                <a href="javascript:;" data-repeater-create class="btn btn-light-primary">
+                                    <i class="ki-duotone ki-plus fs-3"></i>
+                                    Yeni İzin Onay Tanım Alanı Ekle
+                                </a>
+                            </div>
+                            <!--end::Form group-->
+                            <!--begin::Form group-->
+                            <div class="form-group mb-6">
+                                <div data-repeater-list="repeater">
+                                    <div data-repeater-item class="mb-3">
+                                        <div class="form-group row">
+                                            <div class="col-md-6 fv-row">
+                                                <label asp-for="CreateIzinGrupVM.IzinOnayTanimVeSiralari[0].IzinOnayTanimId" class="form-label">İzin Onay Tanımı</label>
+                                                <select asp-for="CreateIzinGrupVM.IzinOnayTanimVeSiralari[0].IzinOnayTanimId" asp-items="@izinOnayTanimlari" class="form-select onay-tanim"></select>
+                                            </div>
+                                            <div class="col-md-2 fv-row">
+                                                <label asp-for="CreateIzinGrupVM.IzinOnayTanimVeSiralari[0].Sira" class="form-label">Onay Sırası</label>
+                                                <input type="number" min="1" max=@maxSira class="form-control mb-2 mb-md-0 sira" asp-for="CreateIzinGrupVM.IzinOnayTanimVeSiralari[0].Sira" value="1" />
+                                            </div>
+                                            <div class="col-md-4">
+                                                <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger mt-3 mt-md-8">
+                                                    <i class="ki-duotone ki-trash fs-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
+                                                    Sil
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Form group-->
+                        </div>
+                        <!--end::Repeater-->
+                        <div class="mt-3">
+                            <input class="btn btn-primary" type="submit" value="İzin Grubu Oluştur" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Create İzin Grup Modal-->
+    <!--begin::Update İzin Grup Modal-->
+    <div class="modal fade modal-xl" tabindex="-1" id="updateIzinGrupModal" data-bs-focus="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">İzin Grubunu Güncelle</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <div id="ret-detay-not-found" class="alert alert-info d-flex align-items-center p-5">
+                        <!--begin::Icon-->
+                        <i class="fa-solid fa-circle-info fs-2hx text-info me-4"><span class="path1"></span><span class="path2"></span></i>
+                        <!--end::Icon-->
+                        <!--begin::Wrapper-->
+                        <div class="d-flex flex-column">
+                            <!--begin::Title-->
+                            <h4 class="mb-1 text-info">Bilgilendirme</h4>
+                            <!--end::Title-->
+                            <!--begin::Content-->
+                            <span>İzin grubunun sadece aşağıda belirtilen alanları güncellenebilir. İzin grubuyla ilgili bir değişiklik yapmak istiyorsanız. Bitiş tarihini @DateTime.Now.AddDays(-1).ToString("dd.MM.yyyy") tarihi seçtikten sonra aynı özelliklere sahip yeni bir izin grubu ekleyebilirsiniz.</span>
+                            <!--end::Content-->
+                        </div>
+                        <!--end::Wrapper-->
+                    </div>
+
+                    <form id="updateIzinGrupForm" method="post" asp-controller="Admin" asp-action="UpdateIzinGrup">
+                        <input type="hidden" asp-for="UpdateIzinGrupVM.Id" />
+                        <div class="form-group mb-6 row">
+                            <div class="col">
+                                <div class="fv-row mb-3">
+                                    <label asp-for="UpdateIzinGrupVM.Aciklama" class="form-label">Açıklama</label>
+                                    <input type="text" class="form-control mb-2 mb-md-0" asp-for="UpdateIzinGrupVM.Aciklama" />
+                                </div>
+
+                                <div class="fv-row mb-3">
+                                    <label asp-for="UpdateIzinGrupVM.CalisanId" class="form-label">Çalışan</label>
+                                    <select asp-for="UpdateIzinGrupVM.CalisanId" class="form-select" disabled></select>
+                                </div>
+
+                                <div class="fv-row mb-3">
+                                    <label asp-for="UpdateIzinGrupVM.UnvanId" class="form-label">Unvan</label>
+                                    <select asp-for="UpdateIzinGrupVM.UnvanId" class="form-select" disabled></select>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="fv-row mb-3">
+                                    <label asp-for="UpdateIzinGrupVM.IsyeriId" class="form-label">İşyeri</label>
+                                    <select asp-for="UpdateIzinGrupVM.IsyeriId" class="form-select" disabled></select>
+                                </div>
+
+                                <div class="fv-row mb-3">
+                                    <label asp-for="UpdateIzinGrupVM.BirimId" class="form-label">Birim</label>
+                                    <select asp-for="UpdateIzinGrupVM.BirimId" class="form-select" disabled></select>
+                                </div>
+
+                                <div class="d-flex">
+                                    <div class="fv-row w-100 mb-3 me-3">
+                                        <label asp-for="UpdateIzinGrupVM.BaslangicTarihi" class="form-label">Başlangıç Tarihi</label>
+                                        <input type="date" class="form-control mb-2 mb-md-0" asp-for="UpdateIzinGrupVM.BaslangicTarihi" />
+                                    </div>
+
+                                    <div class="fv-row w-100">
+                                        <label asp-for="UpdateIzinGrupVM.BitisTarihi" class="form-label">Bitiş Tarihi</label>
+                                        <input type="date" class="form-control mb-2 mb-md-0" asp-for="UpdateIzinGrupVM.BitisTarihi" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!--begin::Repeater-->
+                        <div id="izin-onay-tanim-ve-sira">
+                        </div>
+                        <!--end::Repeater-->
+
+                        <input type="submit" value="Güncelle" class="btn btn-primary" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Update İzin Grup Modal-->
+}
+@section Scripts {
+    <script src="~/assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
+    <script src="~/js/izin-gruplari.js" asp-append-version="true"></script>
+}
+

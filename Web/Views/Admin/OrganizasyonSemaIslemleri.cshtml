@@ -1,0 +1,527 @@
+﻿@using Application.Features.Organizasyonlar.Composite
+@model OrganizasyonlarVM
+
+@{
+    ViewData["Root"] = "Temel İşlemler";
+    ViewData["Title"] = "Organizasyonlar";
+    var menu = ViewBag.menu as OrganizasyonComposite;
+}
+
+<div class="card">
+    <div class="card-header align-items-center py-5 gap-2 gap-md-5">
+        <div class="card-title">
+            <!--begin::Search-->
+            <div class="d-flex align-items-center position-relative my-1">
+                <span class="svg-icon svg-icon-1 position-absolute ms-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                        <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
+                    </svg>
+                </span>
+                <input type="text" data-kt-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Ara" />
+            </div>
+            <!--end::Search-->
+        </div>
+        <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
+            <button type="button" class="btn btn-light-primary fw-bold" data-bs-toggle="modal" data-bs-target="#createOrganizasyonModal">
+                <i class="ki-duotone ki-plus fs-2"><span class="path1"></span><span class="path2"></span></i>
+                Yeni Birim Ekle
+            </button>
+            <!--begin::Export dropdown-->
+            <button type="button" class="btn btn-light-primary fw-bold" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                <i class="ki-duotone ki-exit-down fs-2"><span class="path1"></span><span class="path2"></span></i>
+                Rapor Al
+            </button>
+            <!--begin::Menu-->
+            <div id="organizasyonlar_table_export_menu" class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="copy">
+                        Kopyala
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="excel">
+                        Excel Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="csv">
+                        CSV Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+                <!--begin::Menu item-->
+                <div class="menu-item px-3">
+                    <a href="#" class="menu-link px-3" data-kt-export="pdf">
+                        PDF Dökümü
+                    </a>
+                </div>
+                <!--end::Menu item-->
+            </div>
+            <!--end::Menu-->
+            <!--end::Export dropdown-->
+            <!--begin::Hide default export buttons-->
+            <div id="organizasyonlar_table_buttons" class="d-none"></div>
+            <!--end::Hide default export buttons->
+                            </div>
+                        </div>
+            <!--end::Export buttons-->
+        </div>
+    </div>
+    <div class="table-responsive p-10">
+        <table class="table table-row-bordered table-row-dashed" id="organizasyonlar_table">
+            <thead>
+                <!--begin::Table row-->
+                <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                    <th>Id</th>
+                    <th>Kod</th>
+                    <th>Açıklama (TR)</th>
+                    <th>Açıklama (EN)</th>
+                    <th>Organizasyon Kodu</th>
+                    <th>Ana Birim Mi</th>
+                    <th>Üst Birim</th>
+                    <th>Aktif</th>
+                    <th>İşlemler</th>
+                </tr>
+                <!--end::Table row-->
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section modals {
+    <!--begin::Create Organizasyon Modal-->
+    <div class="modal fade modal-xl" tabindex="-1" id="createOrganizasyonModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Yeni Birim Ekle</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <!--begin::Stepper-->
+                    <div class="stepper stepper-pills stepper-column d-flex flex-column flex-lg-row" id="stepper_org_olustur">
+                        <!--begin::Aside-->
+                        <div class="flex-center flex-wrap mb-6" style="height: 100%;">
+                            <!--begin::Step 1-->
+                            <div class="stepper-item mx-8 my-2 current" data-kt-stepper-element="nav">
+                                <!--begin::Wrapper-->
+                                <div class="stepper-wrapper d-flex align-items-center">
+                                    <!--begin::Icon-->
+                                    <div class="stepper-icon w-40px h-40px">
+                                        <i class="stepper-check fas fa-check"></i>
+                                        <span class="stepper-number">1</span>
+                                    </div>
+                                    <!--end::Icon-->
+                                    <!--begin::Label-->
+                                    <div class="stepper-label">
+                                        <h3 class="stepper-title">
+                                            Adım 1
+                                        </h3>
+
+                                        <div class="stepper-desc">
+                                            Temel Bilgiler
+                                        </div>
+                                    </div>
+                                    <!--end::Label-->
+                                </div>
+                                <!--end::Wrapper-->
+                                <!--begin::Line-->
+                                <div class="stepper-line h-30px"></div>
+                                <!--end::Line-->
+                            </div>
+                            <!--end::Step 1-->
+                            <!--begin::Step 2-->
+                            <div class="stepper-item mx-8 my-2" data-kt-stepper-element="nav">
+                                <!--begin::Wrapper-->
+                                <div class="stepper-wrapper d-flex align-items-center">
+                                    <!--begin::Icon-->
+                                    <div class="stepper-icon w-40px h-40px">
+                                        <i class="stepper-check fas fa-check"></i>
+                                        <span class="stepper-number">2</span>
+                                    </div>
+                                    <!--end::Icon-->
+                                    <!--begin::Label-->
+                                    <div class="stepper-label">
+                                        <h3 class="stepper-title">
+                                            Adım 2
+                                        </h3>
+
+                                        <div class="stepper-desc">
+                                            Bağlı Olduğu Birim Seçimi
+                                        </div>
+                                    </div>
+                                    <!--end::Label-->
+                                </div>
+                                <!--end::Wrapper-->
+
+                            </div>
+                            <!--end::Step 2-->
+                        </div>
+
+
+                        <!--begin::Content-->
+                        <div class="flex-row-fluid py-lg-5 px-lg-15">
+                            <!--begin::Form-->
+                            <form id="createOrganizasyonForm" method="post" asp-controller="Admin" asp-action="OrganizasyonOlustur" class="form mx-auto" novalidate="novalidate">
+                                <!--begin::Group-->
+                                <div class="mb-5">
+                                    <!--begin::Step 1-->
+                                    <div class="current" data-kt-stepper-element="content">
+                                        <div class="w-100">
+                                            <div class="d-sm-flex align-items-center gap-4 mb-3">
+                                                <div class="fv-row w-100">
+                                                    <label asp-for="CreateOrganizasyonVM.OrganizasyonKodu" class="form-label">Organizasyon Kodu</label>
+                                                    <input class="form-control" asp-for="CreateOrganizasyonVM.OrganizasyonKodu" type="text" />
+                                                </div>
+
+                                                <div class="d-sm-flex gap-4 w-100 mt-8">
+                                                    <div class="fv-row form-check form-switch form-check-custom form-check-solid w-100">
+                                                        <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" asp-for="CreateOrganizasyonVM.AnaBirim" value="false" />
+                                                        <label class="form-check-label" asp-for="CreateOrganizasyonVM.AnaBirim">Ana Birim</label>
+                                                    </div>
+
+                                                    <div class="fv-row form-check form-switch form-check-custom form-check-solid w-100">
+                                                        <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" asp-for="CreateOrganizasyonVM.Aktif" checked="checked" value="true" />
+                                                        <label class="form-check-label" asp-for="CreateOrganizasyonVM.Aktif">Aktif</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="d-sm-flex gap-4 mb-3">
+                                                <div class="fv-row w-100">
+                                                    <label asp-for="CreateOrganizasyonVM.Aciklama_TR" class="form-label">Açıklama (TR)</label>
+                                                    <input class="form-control" asp-for="CreateOrganizasyonVM.Aciklama_TR" />
+                                                </div>
+
+                                                <div class="fv-row w-100">
+                                                    <label asp-for="CreateOrganizasyonVM.Aciklama_EN" class="form-label">Açıklama (EN)</label>
+                                                    <input class="form-control" asp-for="CreateOrganizasyonVM.Aciklama_EN" />
+                                                </div>
+                                            </div>
+
+                                            <div class="d-sm-flex gap-4 mb-3">
+                                                <div class="fv-row w-100">
+                                                    <label asp-for="CreateOrganizasyonVM.BirimId" class="form-label">Birim</label>
+                                                    <select asp-for="CreateOrganizasyonVM.BirimId" class="form-select" data-control="select2" data-placeholder="Birim Seçiniz" data-dropdown-parent="#createOrganizasyonModal" data-allow-clear="true"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end::Step 1-->
+                                    <!--begin::Step 2-->
+                                    <div data-kt-stepper-element="content">
+                                        <div class="w-100">
+                                            <div class="card shadow-sm p-5 bg-light mb-6" style="overflow:auto; max-height:200px;">
+                                                <h6>Organizasyon Ağacı</h6>
+                                                @foreach (var component in menu.Components)
+                                                {
+                                                    @Html.Raw(component.Display())
+                                                }
+                                            </div>
+                                            <div class="fv-row w-100">
+                                                <label asp-for="CreateOrganizasyonVM.UstBirimId" class="form-label">Bağlı Olduğu Birim</label>
+                                                <select asp-for="CreateOrganizasyonVM.UstBirimId" asp-items="@ViewBag.selectList" class="form-select" data-control="select2" data-placeholder="Bağlı olduğu birimi seçiniz" data-dropdown-parent="#createOrganizasyonModal"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end::Step 2-->
+
+                                </div>
+                                <!--end::Group-->
+                                <!--begin::Actions-->
+                                <div class="d-flex flex-stack">
+                                    <!--begin::Wrapper-->
+                                    <div class="me-2">
+                                        <button type="button" class="btn btn-light btn-active-light-primary" data-kt-stepper-action="previous">
+                                            <span>&laquo;</span>
+                                            <span>Geri</span>
+                                        </button>
+                                    </div>
+                                    <!--end::Wrapper-->
+                                    <!--begin::Wrapper-->
+                                    <div>
+                                        <button id="form-tip-btn" type="submit" class="btn btn-primary" data-kt-stepper-action="submit">
+                                            <span class="indicator-label">
+                                                Oluştur
+                                            </span>
+                                            <span class="indicator-progress">
+                                                Lütfen bekleyin... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                            </span>
+                                        </button>
+
+                                        <button type="button" class="btn btn-primary" data-kt-stepper-action="next">
+                                            <span>İleri</span>
+                                            <span>&raquo;</span>
+                                        </button>
+                                    </div>
+                                    <!--end::Wrapper-->
+                                </div>
+                                <!--end::Actions-->
+                            </form>
+                            <!--end::Form-->
+                        </div>
+                    </div>
+                    <!--end::Stepper-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Create Organizasyon Modal-->
+    <!--begin::Update Organizasyon Modal-->
+    <div class="modal fade modal-xl" tabindex="-1" id="updateOrganizasyonModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Birim Güncelle</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <form id="updateOrganizasyonForm" asp-controller="Admin" asp-action="UpdateOrganizasyon">
+                        <!--begin::Stepper-->
+                        <div class="stepper stepper-pills stepper-column d-flex flex-column flex-lg-row" id="stepper_org_update">
+                            <!--begin::Aside-->
+                            <div class="flex-center flex-wrap mb-6" style="height: 100%;">
+                                <!--begin::Step 1-->
+                                <div class="stepper-item mx-8 my-2 current" data-kt-stepper-element="nav">
+                                    <!--begin::Wrapper-->
+                                    <div class="stepper-wrapper d-flex align-items-center">
+                                        <!--begin::Icon-->
+                                        <div class="stepper-icon w-40px h-40px">
+                                            <i class="stepper-check fas fa-check"></i>
+                                            <span class="stepper-number">1</span>
+                                        </div>
+                                        <!--end::Icon-->
+                                        <!--begin::Label-->
+                                        <div class="stepper-label">
+                                            <h3 class="stepper-title">
+                                                Adım 1
+                                            </h3>
+
+                                            <div class="stepper-desc">
+                                                Temel Bilgiler
+                                            </div>
+                                        </div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <!--end::Wrapper-->
+                                    <!--begin::Line-->
+                                    <div class="stepper-line h-30px"></div>
+                                    <!--end::Line-->
+                                </div>
+                                <!--end::Step 1-->
+                                <!--begin::Step 2-->
+                                <div class="stepper-item mx-8 my-2" data-kt-stepper-element="nav">
+                                    <!--begin::Wrapper-->
+                                    <div class="stepper-wrapper d-flex align-items-center">
+                                        <!--begin::Icon-->
+                                        <div class="stepper-icon w-40px h-40px">
+                                            <i class="stepper-check fas fa-check"></i>
+                                            <span class="stepper-number">2</span>
+                                        </div>
+                                        <!--end::Icon-->
+                                        <!--begin::Label-->
+                                        <div class="stepper-label">
+                                            <h3 class="stepper-title">
+                                                Adım 2
+                                            </h3>
+
+                                            <div class="stepper-desc">
+                                                Bağlı Olduğu Birim Seçimi
+                                            </div>
+                                        </div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <!--end::Wrapper-->
+                                </div>
+                                <!--end::Step 2-->
+                            </div>
+
+                            <!--begin::Content-->
+                            <div class="flex-row-fluid py-lg-5 px-lg-15">
+                                <!--begin::Group-->
+                                <div class="mb-5">
+                                    <!--begin::Step 1-->
+                                    <div class="current" data-kt-stepper-element="content">
+                                        <div class="w-100">
+                                            <input type="hidden" class="form-control" asp-for="UpdateOrganizasyonVM.Id" />
+                                            <input type="hidden" class="form-control" asp-for="UpdateOrganizasyonVM.Kod" />
+                                            <div class="d-sm-flex align-items-center gap-4 mb-3">
+                                                <div class="fv-row w-100">
+                                                    <label asp-for="UpdateOrganizasyonVM.OrganizasyonKodu" class="form-label">Organizasyon Kodu</label>
+                                                    <input class="form-control" asp-for="UpdateOrganizasyonVM.OrganizasyonKodu" type="text" />
+                                                </div>
+
+                                                <div class="d-sm-flex gap-4 w-100 mt-8">
+                                                    <div class="fv-row form-check form-switch form-check-custom form-check-solid w-100">
+                                                        <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" asp-for="UpdateOrganizasyonVM.AnaBirim" value="false" />
+                                                        <label class="form-check-label" asp-for="UpdateOrganizasyonVM.AnaBirim">Ana Birim</label>
+                                                    </div>
+
+                                                    <div class="fv-row form-check form-switch form-check-custom form-check-solid w-100">
+                                                        <input class="form-control mb-2 mb-md-0 form-check-input" type="checkbox" asp-for="UpdateOrganizasyonVM.Aktif" checked="checked" value="true" />
+                                                        <label class="form-check-label" asp-for="UpdateOrganizasyonVM.Aktif">Aktif</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="d-sm-flex gap-4 mb-3">
+                                                <div class="fv-row w-100">
+                                                    <label asp-for="UpdateOrganizasyonVM.Aciklama_TR" class="form-label">Açıklama (TR)</label>
+                                                    <input class="form-control" asp-for="UpdateOrganizasyonVM.Aciklama_TR" />
+                                                </div>
+
+                                                <div class="fv-row w-100">
+                                                    <label asp-for="UpdateOrganizasyonVM.Aciklama_EN" class="form-label">Açıklama (EN)</label>
+                                                    <input class="form-control" asp-for="UpdateOrganizasyonVM.Aciklama_EN" />
+                                                </div>
+                                            </div>
+
+                                            <div class="d-sm-flex gap-4 mb-3">
+                                                <div class="fv-row w-100">
+                                                    <label asp-for="UpdateOrganizasyonVM.BirimId" class="form-label">Birim</label>
+                                                    <select asp-for="UpdateOrganizasyonVM.BirimId" class="form-select" data-control="select2" data-placeholder="Birim Seçiniz" data-dropdown-parent="#updateOrganizasyonModal" data-allow-clear="true"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end::Step 1-->
+                                    <!--begin::Step 2-->
+                                    <div data-kt-stepper-element="content">
+                                        <div class="w-100">
+                                            <div class="card shadow-sm p-5 bg-light mb-6 tree-root" style="overflow:auto; max-height:200px;">
+                                                <h6>Organizasyon Ağacı</h6>
+                                                @foreach (var component in menu.Components)
+                                                {
+                                                    @Html.Raw(component.Display())
+                                                }
+                                            </div>
+
+                                            <div class="fv-row w-100">
+                                                <label asp-for="UpdateOrganizasyonVM.UstBirimId" class="form-label">Bağlı Olduğu Birim</label>
+                                                <select asp-for="UpdateOrganizasyonVM.UstBirimId" asp-items="@ViewBag.selectList" class="form-select" data-control="select2" data-placeholder="Bağlı olduğu birimi seçiniz" data-dropdown-parent="#updateOrganizasyonModal"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end::Step 2-->
+                                </div>
+                                <!--end::Group-->
+                                <!--begin::Actions-->
+                                <div class="d-flex flex-stack">
+                                    <!--begin::Wrapper-->
+                                    <div class="me-2">
+                                        <button type="button" class="btn btn-light btn-active-light-primary" data-kt-stepper-action="previous">
+                                            <span>&laquo;</span>
+                                            <span>Geri</span>
+                                        </button>
+                                    </div>
+                                    <!--end::Wrapper-->
+                                    <!--begin::Wrapper-->
+                                    <div>
+                                        <button id="form-tip-btn" type="submit" class="btn btn-primary" data-kt-stepper-action="submit">
+                                            <span class="indicator-label">
+                                                Güncelle
+                                            </span>
+                                            <span class="indicator-progress">
+                                                Lütfen bekleyin... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                            </span>
+                                        </button>
+
+                                        <button type="button" class="btn btn-primary" data-kt-stepper-action="next">
+                                            <span>İleri</span>
+                                            <span>&raquo;</span>
+                                        </button>
+                                    </div>
+                                    <!--end::Wrapper-->
+                                </div>
+                                <!--end::Actions-->
+                            </div>
+                        </div>
+                        <!--end::Stepper-->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Update Organizasyon Modal-->
+    <!--begin::Organizasyon Semasi Modal-->
+    <div class="modal fade modal-xl" tabindex="-1" id="orgSchemaModal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Organizasyon Şeması</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <div id="sample" class="card">
+                        <div class="card-flush p-8">
+                            <div id="fullDiagram" style="height: 300px; width: 100%; border: 1px solid black; margin: 2px; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);"><canvas tabindex="0" width="1054" height="248" style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; touch-action: none; width: 1054px; height: 248px;"></canvas><div style="position: absolute; overflow: auto; width: 1054px; height: 248px; z-index: 1;"><div style="position: absolute; width: 1px; height: 1px;"></div></div></div>
+                            <div id="localDiagram" style="height: 300px; width: 100%; border: 1px solid black; margin: 2px; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);"><canvas tabindex="0" width="1054" height="348" style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; touch-action: none; width: 1054px; height: 348px;"></canvas><div style="position: absolute; overflow: auto; width: 1054px; height: 348px; z-index: 1;"><div style="position: absolute; width: 1px; height: 1px;"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Organizasyon Semasi Modal-->
+    <!--begin::Organizasyon Hareket Modal-->
+    <div class="modal fade modal-xl" tabindex="-1" id="organizasyonHareketModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Birim Hareketleri</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <div id="organizasyon-hareketleri-not-found" class="alert alert-success d-flex align-items-center p-5">
+                        <i class="fa-solid fa-circle-info fs-2hx text-success me-4"><span class="path1"></span><span class="path2"></span></i>
+                        <div class="d-flex flex-column">
+                            <h4 class="mb-1 text-success">Bilgilendirme</h4>
+                            <span>Herhangi bir birim hareketi verisi bulunamadı!</span>
+                        </div>
+                    </div>
+                    <div id="organizasyon-hareketleri-table-wrapper"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Organizasyon Hareket Modal-->
+}
+
+@section Scripts {
+    <script src="~/assets/js/custom/gojs/go.js"></script>
+    <script src="~/js/birimler.js" asp-append-version="true"></script>
+}
+
+@section CSS {
+    <link href="~/assets/plugins/custom/jstree/jstree.bundle.css" rel="stylesheet" />
+}

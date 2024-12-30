@@ -1,0 +1,233 @@
+﻿@model IzinDetayVM
+@{
+    ViewData["Title"] = "Detay";
+    ViewData["Root"] = "İzin Talebi";
+}
+<div class="d-md-flex gap-4">
+    <div class="card shadow-sm w-100">
+        <div class="card-header">
+            <h3 class="card-title">Kişisel Bilgiler</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="d-flex align-items-center gap-6">
+                <div class="image-input image-input-circle">
+                    <img class="symbol symbol-circle d-flex w-150px h-150px bgi-size-contain bgi-position-center" style="background-color:white; background-repeat:no-repeat;" src="data:image/jpeg;base64,@Model.Fotograf">
+                </div>
+                <div>
+                    <table class="table table-responsive fs-6">
+                        <tbody>
+                            <tr>
+                                <td class="fw-bolder">Unvan</td>
+                                <td>@Model.Unvan</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bolder">Ad Soyad</td>
+                                <td>@Model.AdSoyad</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bolder">Sicil No.</td>
+                                <td>@Model.SicilNo</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bolder">Birim</td>
+                                <td>@Model.Birim</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bolder">Kalan Senelik İzin Gün Sayısı</td>
+                                <td>@Model.KalanSenelikIzinGunSayisi</td>
+                            </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow-sm w-100 mt-3 mt-md-0">
+        <div class="card-header">
+            <h3 class="card-title">İzin Bilgileri</h3>
+        </div>
+        <div class="card-body fs-6">
+            <table class="table table-responsive lh-sm">
+                <tbody>
+                    <tr>
+                        <td class="fw-bolder">İzin Türü</td>
+                        <td>@Model.IzinTur</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bolder">Gün Sayısı</td>
+                        <td>@Model.GunSayisi</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bolder">Başlangıç - Bitiş Tarihi</td>
+                        <td>@Model.BaslangicTarihi - @Model.BitisTarihi</td>
+                    </tr>
+                    @if (Model.MahsubenBaslangicTarihi != null && Model.MahsubenGunSayisi != null)
+                    {
+                        <tr>
+                            <td class="fw-bolder">Mahsuben Gün Sayısı</td>
+                            <td>@Model.MahsubenGunSayisi</td>
+                        </tr>
+
+                        <tr>
+                            <td class="fw-bolder">Mahsuben Başlangıç - Bitiş Tarihi</td>
+                            <td>@Model.MahsubenBaslangicTarihi.Value.ToString("dd.MM.yyyy") - @Model.BitisTarihi</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td class="fw-bolder">İşe Başlama Tarihi</td>
+                        <td>@Model.IseBaslamaTarihi</td>
+                    </tr>
+
+                    @if (Model.YerineBakacakKisi != null)
+                    {
+                        <tr>
+                            <td class="fw-bolder">Görevini Yapacak Kişi</td>
+                            <td>@Model.YerineBakacakKisi</td>
+                        </tr>
+                    }
+
+                    @if (Model.IzinTur == "Senelik")
+                    {
+                        <tr>
+                            <td class="fw-bolder">Yıllık İzin Ücret İsteği</td>
+                            <td>@Model.YillikIzinUcretiIstegi</td>
+                        </tr>
+                    }
+
+                    @if (Model.Telefon != null)
+                    {
+                        <tr>
+                            <td class="fw-bolder">Telefon</td>
+                            <td>@Model.Telefon</td>
+                        </tr>
+                    }
+
+                    @if (Model.Adres != null)
+                    {
+                        <tr>
+                            <td class="fw-bolder">Adres</td>
+                            <td>@Model.Adres</td>
+                        </tr>
+                    }
+
+                    @if (Model.Aciklama != null)
+                    {
+                        <tr>
+                            <td class="fw-bolder">Açıklama</td>
+                            <td>@Model.Aciklama</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between">
+                <button type="button" id="submit_button_onayla" data-id="@Model.Id" class="btn btn-sm btn-success w-100 me-3">
+                    Onayla
+                </button>
+                <button type="button" class="btn btn-sm btn-danger w-100" data-bs-toggle="modal" data-bs-target="#izinRetFormModal">
+                    Reddet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm p-6 mb-6 mt-3">
+    <div class="card-header">
+        <h3 class="card-title">Kesişen İzinler</h3>
+    </div>
+
+    <div class="card-body">
+        @if (Model.KesisenIzinler?.Count > 0)
+        {
+            <div class="table-responsive fs-6">
+                <table class="table table-row-bordered table-row-dashed">
+                    <thead>
+                        <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                            <th>Unvan</th>
+                            <th>Ad Soyad</th>
+                            <th>İzin Başlangıç Tarihi</th>
+                            <th>İşe Başlama Tarihi</th>
+                            <th>İzin Türü</th>
+                            <th>İzin Durumu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var kesisenIzin in Model.KesisenIzinler)
+                        {
+                            var badgeClass = kesisenIzin.IzinDurumu switch
+                            {
+                                "Beklemede" => "badge-light-primary",
+                                "Onaylandı" => "badge-light-success",
+                                "Reddedildi" => "badge-light-danger",
+                                "İptal Edildi" => "badge-light-dark",
+                                "Düzeltilmek Üzere Geri Gönderildi" => "badge-light-warning",
+                                "Düzenlendi" => "badge-success",
+                                _ => ""
+                            };
+
+                            <tr>
+                                <td>@kesisenIzin.Unvan</td>
+                                <td>@kesisenIzin.AdSoyad</td>
+                                <td>@kesisenIzin.BaslangicTarihi</td>
+                                <td>@kesisenIzin.IseBaslamaTarihi</td>
+                                <td>@kesisenIzin.IzinTur</td>
+                                <td>
+                                    <span class="badge fs-7 @badgeClass fw-bold">@kesisenIzin.IzinDurumu</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-primary text-center mt-3 py-6">
+                <span class="fs-4 fw-bolder">Kesişen izin bulunamadı</span>
+            </div>
+        }
+    </div>
+</div>
+
+@section modals {
+    <!--begin::İzin Ret Formu Modal-->
+    <div class="modal fade modal-lg" tabindex="-1" id="izinRetFormModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">İzin Ret Formu</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <form id="izinRetForm" asp-controller="OnayYetkilisi" asp-action="IzniReddet" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label asp-for="RetSebepId">Ret Sebebi</label>
+                            <select asp-for="RetSebepId" asp-items="@ViewBag.RetSebepleri" class="form-select" data-dropdown-parent="#izinRetFormModal" data-control="select2"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Detay">Detay</label>
+                            <textarea asp-for="Detay" rows="4" class="form-control" type="text"><</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">İptal</button>
+                        <button data-id="@Model.Id" type="submit" class="btn btn-danger">Reddet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--end::İzin Ret Formu Modal-->
+}
+
+@section Scripts {
+    <script src="~/js/izin-talebi-detay.js" asp-append-version="true"></script>
+}
